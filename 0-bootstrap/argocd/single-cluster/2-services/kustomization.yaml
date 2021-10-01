@@ -27,7 +27,7 @@ resources:
 
 
 # Required for IBM MQ
-- argocd/instances/openldap.yaml
+# - argocd/instances/openldap.yaml
 # Required for IBM ACE, IBM MQ
 - argocd/operators/cert-manager.yaml
 - argocd/instances/cert-manager-instance.yaml
