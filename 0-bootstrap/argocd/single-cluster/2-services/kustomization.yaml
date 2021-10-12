@@ -15,15 +15,15 @@ resources:
 # - argocd/instances/ibm-platform-navigator-instance.yaml
 
 # IBM Foundations / Common Services
-- argocd/operators/ibm-foundations.yaml
-- argocd/instances/ibm-foundational-services-instance.yaml
-- argocd/operators/ibm-automation-foundation-core-operator.yaml
+# - argocd/operators/ibm-foundations.yaml
+# - argocd/instances/ibm-foundational-services-instance.yaml
+# - argocd/operators/ibm-automation-foundation-core-operator.yaml
 
 # IBM Entitlement Key Secret for Platform Navigator in tools namespace
 # - argocd/instances/shared-secrets.yaml
 
 # IBM Catalogs
-- argocd/operators/ibm-catalogs.yaml
+# - argocd/operators/ibm-catalogs.yaml
 
 # Required for IBM MQ
 # - argocd/instances/openldap.yaml
