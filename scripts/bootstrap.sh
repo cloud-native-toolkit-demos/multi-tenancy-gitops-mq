@@ -59,56 +59,60 @@ fork_repos () {
 
     pushd ${OUTPUT_DIR}
 
-    GHREPONAME=$(gh api /repos/${GIT_ORG}/multi-tenancy-gitops-mq -q .name || true)
-    if [[ ! ${GHREPONAME} = "multi-tenancy-gitops-mq" ]]; then
+    GHBOOTSTRAPREPONAME="cp4i-gitops-bootstrap"
+    GHREPONAME=$(gh api /repos/${GIT_ORG}/${GHBOOTSTRAPREPONAME} -q .name || true)
+    if [[ ! ${GHREPONAME} = ${GHBOOTSTRAPREPONAME} ]]; then
       echo "Fork not found, creating fork and cloning"
-      gh repo fork cloud-native-toolkit-demos/multi-tenancy-gitops-mq --clone --org ${GIT_ORG} --remote
-      mv multi-tenancy-gitops-mq gitops-0-bootstrap-mq
-    elif [[ ! -d gitops-0-bootstrap-mq ]]; then
+      gh repo fork cloud-native-toolkit-demos/multi-tenancy-gitops-mq --clone --org ${GIT_ORG} --remote --remote-name ${GHBOOTSTRAPREPONAME}
+      mv ${GHBOOTSTRAPREPONAME} gitops-0-bootstrap
+    elif [[ ! -d gitops-0-bootstrap ]]; then
       echo "Fork found, repo not cloned, cloning repo"
-      gh repo clone ${GIT_ORG}/multi-tenancy-gitops-mq gitops-0-bootstrap-mq
+      gh repo clone ${GIT_ORG}/${GHBOOTSTRAPREPONAME} gitops-0-bootstrap
     fi
-    cd gitops-0-bootstrap-mq
+    cd gitops-0-bootstrap
     git remote set-url --push upstream no_push
     git checkout ${GITOPS_BRANCH} || git checkout --track origin/${GITOPS_BRANCH}
     cd ..
 
-    GHREPONAME=$(gh api /repos/${GIT_ORG}/multi-tenancy-gitops-apps -q .name || true)
-    if [[ ! ${GHREPONAME} = "multi-tenancy-gitops-apps" ]]; then
+    GHAPPSREPONAME="cp4i-gitops-apps"
+    GHREPONAME=$(gh api /repos/${GIT_ORG}/${GHAPPSREPONAME} -q .name || true)
+    if [[ ! ${GHREPONAME} = ${GHAPPSREPONAME} ]]; then
       echo "Fork not found, creating fork and cloning"
-      gh repo fork cloud-native-toolkit-demos/multi-tenancy-gitops-apps --clone --org ${GIT_ORG} --remote
-      mv multi-tenancy-gitops-apps gitops-3-apps
+      gh repo fork cloud-native-toolkit-demos/multi-tenancy-gitops-apps --clone --org ${GIT_ORG} --remote --remote-name ${GHAPPSREPONAME}
+      mv ${GHAPPSREPONAME} gitops-3-apps
     elif [[ ! -d gitops-3-apps ]]; then
       echo "Fork found, repo not cloned, cloning repo"
-      gh repo clone ${GIT_ORG}/multi-tenancy-gitops-apps gitops-3-apps
+      gh repo clone ${GIT_ORG}/${GHAPPSREPONAME} gitops-3-apps
     fi
     cd gitops-3-apps
     git remote set-url --push upstream no_push
     git checkout ${GITOPS_BRANCH} || git checkout --track origin/${GITOPS_BRANCH}
     cd ..
 
-    GHREPONAME=$(gh api /repos/${GIT_ORG}/multi-tenancy-gitops-infra -q .name || true)
-    if [[ ! ${GHREPONAME} = "multi-tenancy-gitops-infra" ]]; then
+    GHINFRAREPONAME="cp4i-gitops-infra"
+    GHREPONAME=$(gh api /repos/${GIT_ORG}/${GHINFRAREPONAME} -q .name || true)
+    if [[ ! ${GHREPONAME} = ${GHINFRAREPONAME} ]]; then
       echo "Fork not found, creating fork and cloning"
-      gh repo fork cloud-native-toolkit/multi-tenancy-gitops-infra --clone --org ${GIT_ORG} --remote
-      mv multi-tenancy-gitops-infra gitops-1-infra
+      gh repo fork cloud-native-toolkit/multi-tenancy-gitops-infra --clone --org ${GIT_ORG} --remote --remote-name ${GHINFRAREPONAME}
+      mv ${GHINFRAREPONAME} gitops-1-infra
     elif [[ ! -d gitops-1-infra ]]; then
       echo "Fork found, repo not cloned, cloning repo"
-      gh repo clone ${GIT_ORG}/multi-tenancy-gitops-apps gitops-1-infra
+      gh repo clone ${GIT_ORG}/${GHINFRAREPONAME} gitops-1-infra
     fi
     cd gitops-1-infra
     git remote set-url --push upstream no_push
     git checkout ${GITOPS_BRANCH} || git checkout --track origin/${GITOPS_BRANCH}
     cd ..
 
-    GHREPONAME=$(gh api /repos/${GIT_ORG}/multi-tenancy-gitops-services -q .name || true)
-    if [[ ! ${GHREPONAME} = "multi-tenancy-gitops-services" ]]; then
+    GHSERVICESREPONAME="cp4i-gitops-services"
+    GHREPONAME=$(gh api /repos/${GIT_ORG}/${GHSERVICESREPONAME} -q .name || true)
+    if [[ ! ${GHREPONAME} = ${GHSERVICESREPONAME} ]]; then
       echo "Fork not found, creating fork and cloning"
-      gh repo fork cloud-native-toolkit/multi-tenancy-gitops-services --clone --org ${GIT_ORG} --remote
-      mv multi-tenancy-gitops-services gitops-2-services
+      gh repo fork cloud-native-toolkit/multi-tenancy-gitops-services --clone --org ${GIT_ORG} --remote --remote-name ${GHSERVICESREPONAME}
+      mv ${GHSERVICESREPONAME} gitops-2-services
     elif [[ ! -d gitops-2-services ]]; then
       echo "Fork found, repo not cloned, cloning repo"
-      gh repo clone ${GIT_ORG}/multi-tenancy-gitops-apps gitops-2-services
+      gh repo clone ${GIT_ORG}/${GHSERVICESREPONAME} gitops-2-services
     fi
     cd gitops-2-services
     git remote set-url --push upstream no_push
@@ -158,13 +162,14 @@ init_sealed_secrets () {
 
 install_pipelines () {
   echo "Installing OpenShift Pipelines Operator"
-  oc apply -n openshift-operators -f https://raw.githubusercontent.com/cloud-native-toolkit/multi-tenancy-gitops-services/master/operators/openshift-pipelines/operator.yaml
+  # oc apply -n openshift-operators -f https://raw.githubusercontent.com/cloud-native-toolkit/multi-tenancy-gitops-services/master/operators/openshift-pipelines/operator.yaml
+  oc apply -n openshift-operators -f https://raw.githubusercontent.com/${GIT_ORG}/cp4i-gitops-services/master/operators/openshift-pipelines/operator.yaml
 }
 
 install_argocd () {
     echo "Installing OpenShift GitOps Operator for OpenShift v4.7"
     pushd ${OUTPUT_DIR}
-    oc apply -f gitops-0-bootstrap-mq/setup/ocp47/
+    oc apply -f gitops-0-bootstrap/setup/ocp47/
     sleep 30
     while ! oc wait crd applications.argoproj.io --timeout=-1s --for=condition=Established  2>/dev/null; do sleep 30; done
     sleep 30
@@ -182,7 +187,7 @@ delete_default_argocd_instance () {
 create_custom_argocd_instance () {
     echo "Create a custom ArgoCD instance with custom checks"
     pushd ${OUTPUT_DIR}
-    oc apply -f gitops-0-bootstrap-mq/setup/ocp47/argocd-instance/ -n openshift-gitops
+    oc apply -f gitops-0-bootstrap/setup/ocp47/argocd-instance/ -n openshift-gitops
     sleep 30
     while ! oc wait pod --timeout=-1s --for=condition=ContainersReady -l app.kubernetes.io/name=openshift-gitops-cntk-server -n openshift-gitops > /dev/null; do sleep 30; done
     popd
@@ -227,16 +232,16 @@ data:
   map.yaml: |-
     map:
     - upstreamRepoURL: https://github.com/cloud-native-toolkit-demos/multi-tenancy-gitops-mq.git
-      originRepoUrL: https://github.com/${GIT_ORG}/multi-tenancy-gitops-mq.git
+      originRepoUrL: https://github.com/${GIT_ORG}/cp4i-gitops-bootstrap.git
       originBranch: ${GITOPS_BRANCH}
     - upstreamRepoURL: https://github.com/cloud-native-toolkit/multi-tenancy-gitops-infra.git
-      originRepoUrL: https://github.com/${GIT_ORG}/multi-tenancy-gitops-infra.git
+      originRepoUrL: https://github.com/${GIT_ORG}/cp4i-gitops-infra.git
       originBranch: ${GITOPS_BRANCH}
     - upstreamRepoURL: https://github.com/cloud-native-toolkit/multi-tenancy-gitops-services.git
-      originRepoUrL: https://github.com/${GIT_ORG}/multi-tenancy-gitops-services.git
+      originRepoUrL: https://github.com/${GIT_ORG}/cp4i-gitops-services.git
       originBranch: ${GITOPS_BRANCH}
     - upstreamRepoURL: https://github.com/cloud-native-toolkit-demos/multi-tenancy-gitops-apps.git
-      originRepoUrL: https://github.com/${GIT_ORG}/multi-tenancy-gitops-apps.git
+      originRepoUrL: https://github.com/${GIT_ORG}/cp4i-gitops-apps.git
       originBranch: ${GITOPS_BRANCH}
 EOF
 
@@ -263,7 +268,7 @@ argocd_git_override () {
 deploy_bootstrap_argocd () {
   echo "Deploying top level bootstrap ArgoCD Application for cluster profile ${GITOPS_PROFILE}"
   pushd ${OUTPUT_DIR}
-  oc apply -n openshift-gitops -f gitops-0-bootstrap-mq/${GITOPS_PROFILE}
+  oc apply -n openshift-gitops -f gitops-0-bootstrap/${GITOPS_PROFILE}
   popd
 }
 

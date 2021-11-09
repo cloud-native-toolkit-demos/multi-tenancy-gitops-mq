@@ -1,14 +1,14 @@
 resources:
-#- argocd/ace/cicd.yaml
-#- argocd/ace/dev.yaml
-#- argocd/ace/stage.yaml
-#- argocd/ace/prod.yaml
+- argocd/ace/cicd.yaml
+- argocd/ace/dev.yaml
+- argocd/ace/stage.yaml
+- argocd/ace/prod.yaml
 
 - argocd/mq/cicd.yaml
-#- argocd/mq/dev.yaml
-#- argocd/mq/stage.yaml
-#- argocd/mq/prod.yaml
-#- argocd/mq/tools.yaml
+- argocd/mq/dev.yaml
+- argocd/mq/stage.yaml
+- argocd/mq/prod.yaml
+- argocd/mq/tools.yaml
 
 #- argocd/apic/cicd.yaml
 #- argocd/apic/dev.yaml

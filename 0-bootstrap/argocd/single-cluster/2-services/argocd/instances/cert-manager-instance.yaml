@@ -4,6 +4,9 @@ metadata:
   name: cert-manager-instance
   annotations:
     argocd.argoproj.io/sync-wave: "250"
+    app.kubernetes.io/managed-by: Helm
+    meta.helm.sh/release-name: cert-manager-cntk
+    meta.helm.sh/release-namespace: tools
   labels:
     gitops.tier.group: cntk
 spec:

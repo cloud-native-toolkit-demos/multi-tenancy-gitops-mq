@@ -14,7 +14,3 @@ resources:
 #- argocd/operator-ocs.yaml
 #- argocd/refarch-infraconfig.yaml
 #- argocd/refarch-machinesets.yaml
-
-
-
-
